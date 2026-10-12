@@ -1,0 +1,42 @@
+name: Create tasks
+
+# Runs once, when a student creates their own copy of this template.
+# It turns each file in .github/tasks into a GitHub issue, in order,
+# so Task 1 is issue #1, Task 2 is issue #2, and so on.
+# It does nothing in the template itself, or if any issues already exist.
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  create-tasks:
+    name: Create task issues
+    if: ${{ !github.event.repository.is_template }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get the code
+        uses: actions/checkout@v4
+
+      - name: Create one issue per task
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          existing=$(gh issue list --repo "$GITHUB_REPOSITORY" --state all --limit 1 --json number --jq 'length')
+          if [ "$existing" != "0" ]; then
+            echo "Issues already exist, so the tasks have already been created. Nothing to do."
+            exit 0
+          fi
+          for file in $(ls .github/tasks/*.md | sort); do
+            title=$(head -n 1 "$file" | sed 's/^# *//')
+            tail -n +2 "$file" > /tmp/body.md
+            echo "Creating: $title"
+            gh issue create --repo "$GITHUB_REPOSITORY" --title "$title" --body-file /tmp/body.md
+            sleep 2
+          done

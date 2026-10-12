@@ -1,0 +1,20 @@
+Project title: Room Booking Helper
+Problem: Staff cannot easily see which fictional training rooms are available.
+Users: Office staff in a fictional organisation.
+Outcome: Staff can quickly identify a suitable available room.
+Essential features:
+Show a list of rooms
+Filter by capacity
+Clearly show availability
+Optional features:
+Filter by equipment
+Out of scope:
+No live calendar connection
+No actual bookings
+Constraints:
+Use fictional room data only
+No personal information
+Acceptance criteria:
+At least three fictional rooms appear
+The capacity filter works
+The app shows a helpful message when there are no matches
